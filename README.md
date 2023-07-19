@@ -33,4 +33,4 @@ encoding will happen in /tmp/encoding (tmpfs) to reduce constant diskIO especial
 5. clean up /tmp/encoding (tmpfs)
 6. check via ffmpeg if new encoded file is a valid video
 7. Delete Original File
-8. Rename encoded file to Original file 
+8. Rename encoded file to Original file (automatic remove "h254" name scheme tags like: ```[HorribleSubs] Rewrite - 08 [h264][720p].mkv``` -> ```[HorribleSubs] Rewrite - 08 [720p].mkv```)
