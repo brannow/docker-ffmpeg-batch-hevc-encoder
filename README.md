@@ -11,7 +11,7 @@ use .env file or update docker-compose.yml environment fields to what you want.
 Update the volume: ```"/volumes/MyLibrary:/videos"``` pointing to your your Media Library
 
 ## Startup
-```docker compose build```
+```docker compose build```              
 ```docker compose up```
 and the magic automatic happen
 
