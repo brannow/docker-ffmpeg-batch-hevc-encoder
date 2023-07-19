@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  ffmpeg:
+    build:
+      context: "./config"
+    volumes:
+      - "/volumes/Anime:/videos"
+      - "./config:/config"
+    tmpfs:
+      - "/tmp/encoding"
+    environment:
+      - "TARGET=/videos"
+      - "TARGET_FORMAT=mkv"
+      - "ALLOWED_SOURCE_FORMAT=mkv,mp4,avi,ts,flv,mov,m4v,mpg,ogm,mpeg,wmv,asf,rmvb,VOB"
+      #ANIME
+      - "FFMPEG_CONFIG=-hide_banner -loglevel error -y -tune animation -pix_fmt yuv420p10le -crf 24 -preset medium -map 0 -c copy -c:v libx265"
+      #LIVE ACTION MOVIES
+      #- "FFMPEG_CONFIG=-hide_banner -loglevel error -y -crf 23 -preset medium -map 0 -c copy -c:v libx265"
