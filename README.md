@@ -15,6 +15,10 @@ Update the volume: ```"/volumes/MyLibrary:/videos"``` pointing to your your Medi
 ```docker compose up```
 and the magic automatic happen
 
+OR                  
+for background execution                
+```docker compose up -d```                  
+
 if you want see what happen 
 ```docker compose logs```
 
