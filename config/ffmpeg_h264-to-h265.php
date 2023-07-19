@@ -4,7 +4,7 @@
 $targetDir = trim(getenv('TARGET'));
 $targetFormat = trim(getenv('TARGET_FORMAT'));
 $encodingDir = '/tmp/encoding';
-$skipEncoding = ['hevc'];
+$skipEncoding = ['hevc', 'av1'];
 $fileExtConfig = trim(getenv('ALLOWED_SOURCE_FORMAT'));
 $ffmpeg = trim(exec("which ffmpeg"));
 $ffprobe = trim(exec("which ffprobe"));
