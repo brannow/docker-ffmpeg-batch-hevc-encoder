@@ -24,6 +24,8 @@ Be aware that every TO_ENCODE_FILE one by one will be copied into the TMPFS (hav
 
 encoding will happen in /tmp/encoding (tmpfs) to reduce constant diskIO especially for network/NAS systems nice to have. 
 
+It will automaic skip HEVC encoded file.
+
 
 #### Logic
 1. find matching file in Library.
