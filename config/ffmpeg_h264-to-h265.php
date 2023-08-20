@@ -25,9 +25,12 @@ die('invalid config. abort');
 }
 
 
-function execCommand(string $command): string
+function execCommand(string $command, bool $pipeOutput = false): string
 {
-    return strtolower(trim((string)system($command)));
+    $pipe = '';
+    if ($pipeOutput)
+        $pipe = " 2>&1";
+    return strtolower(trim((string)system($command . $pipe)));
 }
 
 function getVideoEncoding(SplFileInfo $file): string
@@ -51,13 +54,25 @@ function copyFilePermissions(SplFileInfo $source, SplFileInfo $target): void
     }
 }
 
-function encodeFile(SplFileInfo $source, SplFileInfo $target): void
+function encodeFile(SplFileInfo $source, SplFileInfo $target): bool
 {
     global $ffmpeg, $options;
     $encodingOptions = ['-i "'. $source .'"']; // input
     array_push($encodingOptions, ...$options);  // encoding options
     $encodingOptions[] = '"'. $target .'"'; // output
-    execCommand($ffmpeg . ' '. implode(' ', $encodingOptions));
+    ob_start();
+    $encodingOptionsStr = implode(' ', $encodingOptions);
+    execCommand($ffmpeg . ' '. $encodingOptionsStr, true);
+    $output = ob_get_contents();
+    ob_end_clean();
+    echo $output;
+    if (str_contains($output, "Subtitle codec 94213 is not supported")) {
+        echo "Subtitle Error try to convert to str for mkv". PHP_EOL;
+        $modifedEncodingOptionsStr = substr_replace($encodingOptionsStr, '-c:s srt ', strpos($encodingOptionsStr, '-c copy') + 8, 0);
+        execCommand($ffmpeg . ' '. $modifedEncodingOptionsStr);
+    }
+
+     return true;
 }
 
 function copyFile(SplFileInfo $source, SplFileInfo $target): bool
@@ -133,7 +148,7 @@ function main(): void
                 continue;
             }
 
-            $encodingSourceFile = getTempEncodingLocation($file, $targetFormat, 'h264_');
+            $encodingSourceFile = getTempEncodingLocation($file, $file->getExtension(), 'h264_');
             $encodingTargetFile = getTempEncodingLocation($file, $targetFormat, 'hvec_');
             if (!$encodingTargetFile || !$encodingSourceFile) {
                 removeFile($encodingSourceFile);
@@ -152,7 +167,12 @@ function main(): void
             }
 
             echo 'start encode' . PHP_EOL;
-            encodeFile($encodingSourceFile, $encodingTargetFile);
+            if (!encodeFile($encodingSourceFile, $encodingTargetFile)) {
+                echo 'encoding failed, skip; remove tmp files' . PHP_EOL;
+                removeFile($encodingSourceFile);
+                removeFile($encodingTargetFile);
+                continue;
+            }
             echo 'copy encoded file: '. $encodingTargetFile . ' -> ' . $realTargetFileCopy. PHP_EOL;
             copyFile($encodingTargetFile, $realTargetFileCopy);
             echo 'remove tmp files' . PHP_EOL;
@@ -172,9 +192,6 @@ function main(): void
         }
     }
 }
-
-
-
 
 main();
 exit(0);
