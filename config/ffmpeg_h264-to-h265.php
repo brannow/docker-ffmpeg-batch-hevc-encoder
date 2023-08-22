@@ -113,7 +113,7 @@ function validateDuration(SplFileInfo $fileA, SplFileInfo $fileB): bool
 {
     $dA = getDuration($fileA);
     $dB = getDuration($fileB);
-    return ($dA === $dB || (($dA + 10) > $db && ($dA - 10) < $dB));
+    return ($dA === $dB || (($dA + 10) > $dB && ($dA - 10) < $dB));
 }
 
 function getTempEncodingLocation(SplFileInfo $file, string $targetFormat = '', string $prefix = ''): ?SplFileInfo
