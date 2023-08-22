@@ -42,7 +42,6 @@ function getVideoEncoding(SplFileInfo $file): string
 function validateFile(SplFileInfo $file): bool
 {
     global $ffmpeg;
-
     return empty(execCommand($ffmpeg . ' -v error -i "'. $file .'" -f null -'));
 }
 
@@ -102,6 +101,19 @@ function removeFile(SplFileInfo $file): bool
     }
 
     return false;
+}
+
+function getDuration(SplFileInfo $file): float
+{
+    global $ffprobe;
+    return (float)trim(execCommand($ffprobe . ' -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 "' . $file . '"'));
+}
+
+function validateDuration(SplFileInfo $fileA, SplFileInfo $fileB): bool
+{
+    $dA = getDuration($fileA);
+    $dB = getDuration($fileB);
+    return ($dA === $dB || (($dA + 10) > $db && ($dA - 10) < $dB));
 }
 
 function getTempEncodingLocation(SplFileInfo $file, string $targetFormat = '', string $prefix = ''): ?SplFileInfo
@@ -166,7 +178,7 @@ function main(): void
                 continue;
             }
 
-            echo 'start encode' . PHP_EOL;
+            echo 'start encode'. PHP_EOL;
             if (!encodeFile($encodingSourceFile, $encodingTargetFile)) {
                 echo 'encoding failed, skip; remove tmp files' . PHP_EOL;
                 removeFile($encodingSourceFile);
@@ -180,7 +192,7 @@ function main(): void
             removeFile($encodingSourceFile);
 
             echo 'validate file: ' . $realTargetFileCopy . PHP_EOL;
-            if (getVideoEncoding($realTargetFileCopy) === 'hevc' && validateFile($realTargetFileCopy)) {
+            if (getVideoEncoding($realTargetFileCopy) === 'hevc' && validateDuration($realTargetFileCopy, $file) && validateFile($realTargetFileCopy)) {
                 echo 'file valid, remove original file' . PHP_EOL;
                 copyFilePermissions($file, $realTargetFileCopy);
                 removeFile($file);
@@ -195,3 +207,4 @@ function main(): void
 
 main();
 exit(0);
+
