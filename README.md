@@ -22,6 +22,8 @@ for background execution
 if you want see what happen 
 ```docker compose logs```
 
+## env.files usage
+```docker compose --env-file anime.env up -d```
 
 ### Nice to Know
 Be aware that every TO_ENCODE_FILE one by one will be copied into the TMPFS (have enough ram or update the php script to let it encode onn disk).          

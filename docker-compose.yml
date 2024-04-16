@@ -5,15 +5,20 @@ services:
     build:
       context: "./config"
     volumes:
-      - "/volumes/Anime:/videos"
+     # - "/volumes/Seed/Anime:/videos"
+     # - "/volumes/Seed/Movie:/videos"
+     # - "/volumes/Seed/Serien:/videos"
+      - "${VOLUME_PATH}:/videos"
       - "./config:/config"
-    tmpfs:
-      - "/tmp/encoding"
+      - "./enc:/tmp/encoding"
+    #tmpfs:
+    #  - "/tmp/encoding"
     environment:
       - "TARGET=/videos"
       - "TARGET_FORMAT=mkv"
       - "ALLOWED_SOURCE_FORMAT=mkv,mp4,avi,ts,flv,mov,m4v,mpg,ogm,mpeg,wmv,asf,rmvb,VOB"
-      #ANIME
-      - "FFMPEG_CONFIG=-hide_banner -loglevel error -y -tune animation -pix_fmt yuv420p10le -crf 24 -preset medium -map 0 -c copy -c:v libx265 -x265-params profile=main10"
+      - "FFMPEG_CONFIG=${FFMPEG_CONFIG}"
+     #ANIME
+     # - "FFMPEG_CONFIG=-hide_banner -loglevel error -y -tune animation -pix_fmt yuv420p10le -crf 24 -preset medium -map 0 -c copy -c:v libx265 -x265-params profile=main10"
       #LIVE ACTION MOVIES
-      #- "FFMPEG_CONFIG=-hide_banner -loglevel error -y -crf 23 -preset medium -map 0 -c copy -c:v libx265"
+     # - "FFMPEG_CONFIG=-hide_banner -loglevel error -y -crf 20 -preset medium -map 0 -c copy -c:v libx265"

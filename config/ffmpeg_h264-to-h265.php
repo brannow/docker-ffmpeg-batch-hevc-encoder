@@ -113,7 +113,7 @@ function validateDuration(SplFileInfo $fileA, SplFileInfo $fileB): bool
 {
     $dA = getDuration($fileA);
     $dB = getDuration($fileB);
-    return ($dA === $dB || (($dA + 10) > $db && ($dA - 10) < $dB));
+    return ($dA === $dB || (($dA + 100) > $dB && ($dA - 100) < $dB));
 }
 
 function getTempEncodingLocation(SplFileInfo $file, string $targetFormat = '', string $prefix = ''): ?SplFileInfo
@@ -137,6 +137,16 @@ function removeEncodingHintsFromBasename(SplFileInfo $file, string $targetFormat
     $basename = str_replace($permutations, '', $basename);
     $basename = str_replace($permutations, '', $basename);
     return new SplFileInfo($file->getPath() . DIRECTORY_SEPARATOR . $prefix . trim($basename, '.') . '.' . $targetFormat);
+}
+
+function humanFileSize(int $size, string $unit = ''): string {
+  if( (!$unit && $size >= 1<<30) || $unit == "GB")
+    return number_format($size/(1<<30),2)."GB";
+  if( (!$unit && $size >= 1<<20) || $unit == "MB")
+    return number_format($size/(1<<20),2)."MB";
+  if( (!$unit && $size >= 1<<10) || $unit == "KB")
+    return number_format($size/(1<<10),2)."KB";
+  return number_format($size)." bytes";
 }
 
 function main(): void
@@ -191,6 +201,7 @@ function main(): void
             removeFile($encodingTargetFile);
             removeFile($encodingSourceFile);
 
+            echo 'filesize saved: ' . humanFileSize($file->getSize() - $realTargetFileCopy->getSize()) . PHP_EOL;
             echo 'validate file: ' . $realTargetFileCopy . PHP_EOL;
             if (getVideoEncoding($realTargetFileCopy) === 'hevc' && validateDuration($realTargetFileCopy, $file) && validateFile($realTargetFileCopy)) {
                 echo 'file valid, remove original file' . PHP_EOL;
