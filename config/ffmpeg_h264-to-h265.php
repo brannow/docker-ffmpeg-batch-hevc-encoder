@@ -204,9 +204,9 @@ function main(): void
             $originalSize = $file->getSize();
             $targetSize = $realTargetFileCopy->getSize();
             if ($originalSize > 0) {
-                $percentage = (int)(($targetSize / $originalSize) * 100);
+                $percentage = 100 - ((int)(($targetSize / $originalSize) * 100));
             } else {
-                $percentage = 0; // handle the case where the original size is 0 to avoid division by zero
+                $percentage = 100; // handle the case where the original size is 0 to avoid division by zero
             }
             echo 'filesize saved: ' . humanFileSize($originalSize) . ' -> ' . humanFileSize($targetSize) . ' saved: ' . $percentage . '%' . PHP_EOL;
             echo 'validate file: ' . $realTargetFileCopy . PHP_EOL;
