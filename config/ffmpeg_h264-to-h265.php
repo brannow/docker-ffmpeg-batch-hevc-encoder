@@ -201,7 +201,14 @@ function main(): void
             removeFile($encodingTargetFile);
             removeFile($encodingSourceFile);
 
-            echo 'filesize saved: ' . humanFileSize($file->getSize() - $realTargetFileCopy->getSize()) . PHP_EOL;
+            $originalSize = $file->getSize();
+            $targetSize = $realTargetFileCopy->getSize();
+            if ($originalSize > 0) {
+                $percentage = (int)(($targetSize / $originalSize) * 100);
+            } else {
+                $percentage = 0; // handle the case where the original size is 0 to avoid division by zero
+            }
+            echo 'filesize saved: ' . humanFileSize($originalSize) . ' -> ' . humanFileSize($targetSize) . ' saved: ' . $percentage . '%' . PHP_EOL;
             echo 'validate file: ' . $realTargetFileCopy . PHP_EOL;
             if (getVideoEncoding($realTargetFileCopy) === 'hevc' && validateDuration($realTargetFileCopy, $file) && validateFile($realTargetFileCopy)) {
                 echo 'file valid, remove original file' . PHP_EOL;
